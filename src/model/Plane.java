@@ -100,6 +100,10 @@ public class Plane {
      * Completely clears the plane
      */
     public void clear() {
-        // TODO: finish
+        Canvas canvas = gc.getCanvas();
+
+        edges.clear();
+        activePoints.clear();
+        gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
     }
 }
