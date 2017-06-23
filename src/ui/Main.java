@@ -23,15 +23,17 @@ import java.util.Timer;
  */
 public class Main extends Application {
     private static final int POINTS_TO_ADD = 50;
-    public int WIDTH = 1200;
-    public int HEIGHT = 800;
+    private static final int WIDTH = 1800;
+    private static final int HEIGHT = 800;
 
     private Plane plane;
 
-    @Override public void start(Stage stage) {Group root = new Group();
+    @Override public void start(Stage stage) {
+        Group root = new Group();
+        stage.setMaximized(true);
         Scene scene = new Scene(root, WIDTH, HEIGHT, Color.BLACK);
 
-        final Canvas canvas = new Canvas(scene.getWidth(),scene.getHeight());
+        final Canvas canvas = new Canvas(scene.getWidth(), scene.getHeight());
         plane = new Plane(canvas);
 
         scene.setOnMouseClicked(event -> {
@@ -47,10 +49,6 @@ public class Main extends Application {
             }
         });
 
-        Timeline timeline = new Timeline();
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.setAutoReverse(true);
-
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long l) {
@@ -61,18 +59,28 @@ public class Main extends Application {
         timer.start();
 
         scene.setOnKeyTyped(event -> {
-            if (event.getCharacter().equals("a")) {
-                for (int i = 0; i < POINTS_TO_ADD; i++) {
-                    plane.addStartingPoint(new Point2D(0, 0));
-                }
-            } else if (event.getCharacter().equals("c")) {
-                plane.clear();
+            switch (event.getCharacter()) {
+                case "a":
+                    for (int i = 0; i < POINTS_TO_ADD; i++) {
+                        plane.addStartingPoint(new Point2D(0, 0));
+                    }
+                    break;
+                case "c":
+                    plane.clear();
+                    break;
+                default:
+                    try {
+                        int edgeSelector = Integer.parseInt(event.getCharacter());
+                        plane.selectEdge(edgeSelector);
+                    } catch (NumberFormatException ignored) {
+                    }
+                    break;
             }
         });
 
         root.getChildren().add(canvas);
 
-        stage.setTitle("SSTG Sierpinski Triangle Generator");
+        stage.setTitle("Stochastic Sierpinski Triangle Generator");
         stage.setScene(scene);
         stage.sizeToScene();
         stage.show();
