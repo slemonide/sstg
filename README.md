@@ -6,6 +6,8 @@ SSTG is a Stochatic Sierpinky Triangle Generator
 * Add initial generator points using secondary mouse button or "a" key
 * Watch how the Sierpinsky Triangle pattern forms
 
+Press "c" to clear the canvas.
+
 ## Screenshots
 
 Triangle being generated:
