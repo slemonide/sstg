@@ -14,3 +14,6 @@ Triangle being generated:
 Triangle after more iterations:
 ![Complete Sierpinsky Triangle](doc/complete_triangle.PNG)
 
+Another possible fractal:
+![Another Fractal](doc/another-shape.PNG)
+
