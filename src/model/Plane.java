@@ -18,7 +18,7 @@ public class Plane {
     private static final Paint POINT_COLOR = Color.AQUAMARINE;
     private static final int FILL_RADIUS = 1;
     private static final Random RANDOM = new Random();
-    private static final double EDGE_RADIUS = 3;
+    private static final double EDGE_RADIUS = 2;
     private static final double FACTOR = 0.5;
 
     private GraphicsContext gc;
@@ -34,17 +34,10 @@ public class Plane {
         gc = canvas.getGraphicsContext2D();
 
         edges = new ArrayList<>();
+        edges.add(new ArrayList<>());
         activePoints = new ArrayList<>();
         activeEdgeGroup = 0;
-        selectedEdgeGroup = 1;
-
-        initializeEdgeGroups();
-    }
-
-    private void initializeEdgeGroups() {
-        for (int i = 0; i < 10; i++) {
-            edges.add(new ArrayList<>());
-        }
+        selectedEdgeGroup = 0;
     }
 
     /**
@@ -92,22 +85,26 @@ public class Plane {
      * @return next active point
      */
     private Point2D nextPoint(Point2D point) {
-        Point2D randomEdge = pickRandomEdge();
+        Optional<Point2D> randomEdge = pickRandomEdge();
 
-        return (point.add(randomEdge).multiply(FACTOR));
+        while (!randomEdge.isPresent()) {
+            randomEdge = pickRandomEdge();
+        }
+
+        return (point.add(randomEdge.get()).multiply(FACTOR));
     }
 
     /**
-     * Pick a random edge
+     * Pick a random edge, if edge is present
      * @return a random edge
      */
-    private Point2D pickRandomEdge() {
+    private Optional<Point2D> pickRandomEdge() {
         List<Point2D> edgeGroup = getNextEdgeGroup();
 
         if (edgeGroup.size() > 0) {
-            return edgeGroup.get(RANDOM.nextInt(edgeGroup.size()));
+            return Optional.of(edgeGroup.get(RANDOM.nextInt(edgeGroup.size())));
         } else {
-            return new Point2D(0,0);
+            return Optional.empty();
         }
     }
 
@@ -118,17 +115,10 @@ public class Plane {
         Canvas canvas = gc.getCanvas();
 
         edges.clear();
-        initializeEdgeGroups();
+        selectedEdgeGroup = 0;
+        edges.add(new ArrayList<>());
         activePoints.clear();
         gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
-    }
-
-    /**
-     * Selects the edge group
-     * @param edgeSelector the index of edge group to be selected
-     */
-    public void selectEdge(int edgeSelector) {
-        selectedEdgeGroup = edgeSelector;
     }
 
     /**
@@ -136,8 +126,24 @@ public class Plane {
      * @return next edge group, loop back when needed
      */
     private List<Point2D> getNextEdgeGroup() {
+        assert (edges.size() > 0);
         activeEdgeGroup = (activeEdgeGroup + 1) % edges.size();
 
         return edges.get(activeEdgeGroup);
+    }
+
+    /**
+     * Select/create next edge group
+     */
+    public void nextEdgeGroup() {
+        edges.add(new ArrayList<>());
+        selectedEdgeGroup++;
+    }
+
+    /**
+     * If possible, switch to previous edge group
+     */
+    public void prevEdgeGroup() {
+        selectedEdgeGroup = Math.max(selectedEdgeGroup - 1, 0);
     }
 }

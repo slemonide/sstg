@@ -68,12 +68,11 @@ public class Main extends Application {
                 case "c":
                     plane.clear();
                     break;
-                default:
-                    try {
-                        int edgeSelector = Integer.parseInt(event.getCharacter());
-                        plane.selectEdge(edgeSelector);
-                    } catch (NumberFormatException ignored) {
-                    }
+                case "2":
+                    plane.nextEdgeGroup();
+                    break;
+                case "1":
+                    plane.prevEdgeGroup();
                     break;
             }
         });
