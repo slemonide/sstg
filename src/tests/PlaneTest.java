@@ -12,13 +12,4 @@ import static org.junit.Assert.*;
  * Tests for the Plane class
  */
 public class PlaneTest {
-    // forget about canvas for now
-    private Canvas testCanvas;
-    private Plane testPlane;
-
-    @Before
-    public void runBefore() {
-        testCanvas = new Canvas();
-        testPlane = new Plane(testCanvas);
-    }
 }

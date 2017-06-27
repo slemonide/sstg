@@ -23,18 +23,18 @@ import java.util.Timer;
  */
 public class Main extends Application {
     private static final int POINTS_TO_ADD = 50;
-    private static final int WIDTH = 1800;
-    private static final int HEIGHT = 800;
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 600;
 
     private Plane plane;
 
     @Override public void start(Stage stage) {
         Group root = new Group();
+        Scene scene = new Scene(root, Color.BLACK);
         stage.setMaximized(true);
-        Scene scene = new Scene(root, WIDTH, HEIGHT, Color.BLACK);
 
-        final Canvas canvas = new Canvas(scene.getWidth(), scene.getHeight());
-        plane = new Plane(canvas);
+        Group circles = new Group();
+        plane = new Plane(circles);
 
         scene.setOnMouseClicked(event -> {
             Point2D position = new Point2D(
@@ -77,11 +77,10 @@ public class Main extends Application {
             }
         });
 
-        root.getChildren().add(canvas);
+        root.getChildren().add(circles);
 
         stage.setTitle("Stochastic Sierpinski Triangle Generator");
         stage.setScene(scene);
-        stage.sizeToScene();
         stage.show();
     }
 

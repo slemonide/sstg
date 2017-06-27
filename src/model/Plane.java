@@ -2,10 +2,11 @@ package model;
 
 import com.sun.istack.internal.NotNull;
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 
 import java.util.*;
 
@@ -21,7 +22,7 @@ public class Plane {
     private static final double EDGE_RADIUS = 2;
     private static final double FACTOR = 0.5;
 
-    private GraphicsContext gc;
+    private Group group;
     private List<List<Point2D>> edges;
     private List<Point2D> activePoints;
     private int activeEdgeGroup;
@@ -30,8 +31,8 @@ public class Plane {
     /**
      * Construct a new empty plane associated with the given canvas
      */
-    public Plane(@NotNull Canvas canvas) {
-        gc = canvas.getGraphicsContext2D();
+    public Plane(@NotNull Group group) {
+        this.group = group;
 
         edges = new ArrayList<>();
         edges.add(new ArrayList<>());
@@ -45,8 +46,7 @@ public class Plane {
      * @param position position of the edge to be added
      */
     public void addEdge(@NotNull Point2D position) {
-        gc.setFill(EDGE_COLOR);
-        gc.fillOval(position.getX(), position.getY(), EDGE_RADIUS, EDGE_RADIUS);
+        group.getChildren().add(new Circle(position.getX(), position.getY(), EDGE_RADIUS, EDGE_COLOR));
 
         edges.get(selectedEdgeGroup).add(position);
     }
@@ -56,8 +56,7 @@ public class Plane {
      * @param position position of the starting point to be added
      */
     public void addStartingPoint(@NotNull Point2D position) {
-        gc.setFill(POINT_COLOR);
-        gc.fillOval(position.getX(), position.getY(), FILL_RADIUS, FILL_RADIUS);
+        group.getChildren().add(new Circle(position.getX(), position.getY(), EDGE_RADIUS, POINT_COLOR));
 
         activePoints.add(position);
     }
@@ -69,11 +68,10 @@ public class Plane {
     public void tick() {
         List<Point2D> nextActivePoints = new ArrayList<>();
 
-        for (Point2D point : activePoints) {
-            nextActivePoints.add(nextPoint(point));
+        for (Point2D position : activePoints) {
+            nextActivePoints.add(nextPoint(position));
 
-            gc.setFill(POINT_COLOR);
-            gc.fillOval(point.getX(), point.getY(), FILL_RADIUS, FILL_RADIUS);
+            group.getChildren().add(new Circle(position.getX(), position.getY(), EDGE_RADIUS, POINT_COLOR));
         }
 
         activePoints = nextActivePoints;
@@ -112,13 +110,11 @@ public class Plane {
      * Completely clears the plane
      */
     public void clear() {
-        Canvas canvas = gc.getCanvas();
-
         edges.clear();
         selectedEdgeGroup = 0;
         edges.add(new ArrayList<>());
         activePoints.clear();
-        gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
+        group.getChildren().clear();
     }
 
     /**
